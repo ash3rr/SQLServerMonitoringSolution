@@ -1,7 +1,9 @@
 # SQL Server Monitoring Solution
 
-This is my custom built solution to monitor SQL Server on the cheap.
+The solution is comprised of  *.tbl files which must be installed ran first inside the DBATools database.
 
-Comprises: Tables, Jobs, Stored Procedures and a Power BI Dashboard. 
+After this you can create the stored procedure files (sp_) in the same database. 
 
-I offer no guarantees that it will not as it currently stands, I have not had the chance to package it in a digestible format yet. 
+You should then create the jobs.
+
+After this installation step, metrics are inserted into tables within the DBATools database. The Power BI dashboard which is in the repository connects to and allows you visualise these metrics in order to monitor SQL Server performance.
