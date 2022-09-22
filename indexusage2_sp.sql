@@ -1,9 +1,7 @@
-sp_indexusage2
-
 USE [DBATools]
 GO
 
-/****** Object:  StoredProcedure [dbo].[sp_indexusage]    Script Date: 20.12.2021 13:20:08 ******/
+/****** Object:  StoredProcedure [dbo].[sp_indexusage2]    Script Date: 20.09.2022 12:23:32 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -11,19 +9,20 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
---Drop procedure sp_indexusage 
---sp_indexusage
-Create procedure [dbo].[sp_indexusage2]
+
+--Drop procedure sp_indexusage2
+--sp_indexusage2
+CREATE procedure [dbo].[sp_indexusage2]
 AS
 BEGIN
 
-IF OBJECT_ID(N'tempdb..##IndexUsage') IS NOT NULL
+IF OBJECT_ID(N'tempdb..##IndexUsage2') IS NOT NULL
 BEGIN
-DROP TABLE ##IndexUsage
+DROP TABLE ##IndexUsage2
 END
 
 
-CREATE TABLE ##IndexUsage(
+CREATE TABLE ##IndexUsage2(
 	[DatabaseName] [nvarchar](128) NULL,
 	[Schema Name] [nvarchar](128) NULL,
 	[Table Name] [nvarchar](128) NULL,
@@ -42,7 +41,7 @@ CREATE TABLE ##IndexUsage(
 Declare @sql Varchar(max)
 
 set @sql = 'use [?]
-INSERT INTO ##IndexUsage
+INSERT INTO ##IndexUsage2
 SELECT DB_NAME(DB_ID()) as DatabaseName, SCHEMA_NAME(o.[schema_id]) AS [Schema Name], 
 OBJECT_NAME(s.[object_id]) AS [Table Name],
 i.name AS [Index Name], i.index_id, 
@@ -64,15 +63,12 @@ ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC OPTION (RECOM
 
 execute Sp_msforeachdb @sql
 
-SELECT * FROM ##IndexUsage
+SELECT * FROM ##IndexUsage2
 
-DROP TABLE ##IndexUsage
+--DROP TABLE ##IndexUsage2
 
 END
 
 GO
-
-
-
 
 

@@ -1,7 +1,7 @@
 USE [DBATools]
 GO
 
-/****** Object:  Table [dbo].[top_waits]    Script Date: 22.08.2022 13:27:37 ******/
+/****** Object:  Table [dbo].[top_waits]    Script Date: 20.09.2022 12:37:13 ******/
 SET ANSI_NULLS ON
 GO
 

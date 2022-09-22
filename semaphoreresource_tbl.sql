@@ -1,7 +1,7 @@
 USE [DBATools]
 GO
 
-/****** Object:  Table [dbo].[SemaphoreResourceSummary]    Script Date: 22.08.2022 13:26:07 ******/
+/****** Object:  Table [dbo].[SemaphoreResourceSummary]    Script Date: 20.09.2022 12:35:50 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -21,7 +21,9 @@ CREATE TABLE [dbo].[SemaphoreResourceSummary](
 	[timeout_error_count] [bigint] NULL,
 	[forced_grant_count] [bigint] NULL,
 	[pool_id] [int] NULL,
-	[MeasurementTime] [datetime] NOT NULL
+	[MeasurementTime] [datetime] NOT NULL,
+	[MEASUREMENTDATE] [date] NULL
 ) ON [PRIMARY]
 GO
+
 

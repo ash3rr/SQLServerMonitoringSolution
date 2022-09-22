@@ -1,7 +1,7 @@
 USE [DBATools]
 GO
 
-/****** Object:  Table [dbo].[memoryclerksummary]    Script Date: 22.08.2022 13:17:42 ******/
+/****** Object:  Table [dbo].[memoryclerksummary]    Script Date: 20.09.2022 12:34:58 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -12,7 +12,8 @@ CREATE TABLE [dbo].[memoryclerksummary](
 	[ClerkType] [nvarchar](60) NOT NULL,
 	[SizeMb] [bigint] NULL,
 	[MeasurementTime] [datetime] NOT NULL,
-	[MeasurementDate] [date] NOT NULL
+	[MeasurementDate] [date] NULL
 ) ON [PRIMARY]
 GO
+
 

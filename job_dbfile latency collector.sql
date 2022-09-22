@@ -1,11 +1,11 @@
 USE [msdb]
 GO
 
-/****** Object:  Job [DBATools - CPU Rank Collector]    Script Date: 12/9/2021 2:59:04 AM ******/
+/****** Object:  Job [DBATools - DB File Latency Collector]    Script Date: 19.09.2022 12:32:35 ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 12/9/2021 2:59:04 AM ******/
+/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 19.09.2022 12:32:35 ******/
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
@@ -14,20 +14,19 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 END
 
 DECLARE @jobId BINARY(16)
-EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'DBATools - CPU Rank Collector', 
+EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'DBATools - DB File Latency Collector', 
 		@enabled=1, 
 		@notify_level_eventlog=2, 
-		@notify_level_email=2, 
+		@notify_level_email=0, 
 		@notify_level_netsend=0, 
 		@notify_level_page=0, 
 		@delete_level=0, 
-		@description=N'DB by CPU Rank', 
+		@description=N'No description available.', 
 		@category_name=N'[Uncategorized (Local)]', 
-		@owner_login_name=N'SA', 
-		@notify_email_operator_name=N'', @job_id = @jobId OUTPUT
+		@owner_login_name=N'sa', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [Run Insert]    Script Date: 12/9/2021 2:59:05 AM ******/
-EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Run Insert', 
+/****** Object:  Step [step 1]    Script Date: 19.09.2022 12:32:35 ******/
+EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'step 1', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
 		@on_success_action=1, 
@@ -37,28 +36,8 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Run Inse
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'TSQL', 
-		@command=N'
-
-WITH DB_CPU_Stats
-AS
-(SELECT pa.DatabaseID, DB_Name(pa.DatabaseID) AS [Database Name], SUM(qs.total_worker_time/1000) AS [CPU_Time_Ms]
- FROM sys.dm_exec_query_stats AS qs WITH (NOLOCK)
- CROSS APPLY (SELECT CONVERT(int, value) AS [DatabaseID] 
-              FROM sys.dm_exec_plan_attributes(qs.plan_handle)
-              WHERE attribute = N''dbid'') AS pa
- GROUP BY DatabaseID)
-INSERT INTO DBATOOLS.DBO.DbCPURank
-SELECT ROW_NUMBER() OVER(ORDER BY [CPU_Time_Ms] DESC) AS [CPU Rank],
-       [Database Name], [CPU_Time_Ms] AS [CPU Time (ms)], 
-       CAST([CPU_Time_Ms] * 1.0 / SUM([CPU_Time_Ms]) OVER() * 100.0 AS DECIMAL(5, 2)) AS [CPU Percent]
-	   ,convert(date,getdate()) as [MeasurementDate]
---INTO DBATOOLS.DBO.DbCPURank
-FROM DB_CPU_Stats
-WHERE DatabaseID <> 32767 -- ResourceDB
---ORDER BY [CPU Rank] OPTION (RECOMPILE);
-------
-', 
-		@database_name=N'master', 
+		@command=N'sp_dbfilelatencymonitor', 
+		@database_name=N'DBATools', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 EXEC @ReturnCode = msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
